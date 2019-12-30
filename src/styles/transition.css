@@ -1,0 +1,15 @@
+
+/* transition-left */
+.fade-left-transform-leave-active,
+.fade-left-transform-enter-active {
+  overflow: hidden;
+  transition: all 0.5s;
+}
+.fade-left-transform-enter {
+  opacity: 0;
+  transform: translateX(-30px);
+}
+.fade-left-transform-leave-to {
+  opacity: 0;
+  transform: translateX(30px);
+}
