@@ -16,7 +16,7 @@
  * }
  *
  */
-import request from "@/plugins/request";
+import request from "@/utils/request";
 import { url } from "./url";
 export default {
   async login(data) {

@@ -1,28 +1,57 @@
+/* eslint-disable no-console */
+/* eslint-disable no-unused-vars */
+/* eslint-disable no-debugger */
+
 import router from "./router";
-// import storage from "@/plugins/localStorage";
-// import store from "./store";
+import storage from "./utils/localStorage";
+import posts from "./api/mock_index.js";
+import store from "./store";
 
 router.beforeEach(async (to, from, next) => {
   document.title = to.meta.title || "后台管理模板";
 
-  //确定用户是否登录
-  // const hasToken = storage.get('token')
+  const hasToken = storage.get("token");
+  if (!hasToken) {
+    /* has no token */
+    if (to.path === "/login") {
+      next();
+    } else {
+      next({ path: "/login" });
+    }
+  } else {
+    if (to.path === "/login") {
+      next();
+    } else {
+      const hasRoles = store.getters.roles && store.getters.roles.length > 0;
+      if (hasRoles) {
+        next();
+      } else {
+        try {
+          // get user info
+          const info = await posts.getUserInfo();
+          store.commit("user/changeUserInfo", info);
+          // generate accessible routes map based on roles
+          const accessRoutes = await store.dispatch(
+            "permission/generateRoutes",
+            info.roles
+          );
+          // dynamically add accessible routes
+          router.addRoutes(accessRoutes);
 
-  // if(hasToken) {
-  //   if(to.path === '/login') {
-  //     next()
-  //   }else {
+          // hack method to ensure that addRoutes is complete
+          // set the replace: true, so the navigation will not leave a history record
+          // next({ ...to, replace: true });
 
-  //     const hasRoles =
-  //     if() {}
-  //   }
-
-  // }else {
-  //   /* no token */
-
-  //   next('/login')
-
-  // }
-
-  next();
+          // detail see: https://github.com/vuejs/vue-router/issues/2873
+          // fixed router.replace error => Uncaught (in promise) undefined
+          next();
+        } catch (error) {
+          // remove token and go to login page to re-login
+          console.log(error);
+          store.dispatch("user/resetUserInfo");
+          next({ path: "/login" });
+        }
+      }
+    }
+  }
 });

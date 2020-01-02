@@ -6,6 +6,7 @@
 
 <script>
 export default {
-  name: "overview"
+  name: "overview",
+  async created() {}
 };
 </script>
