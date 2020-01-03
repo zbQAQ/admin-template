@@ -38,13 +38,13 @@ router.beforeEach(async (to, from, next) => {
           // dynamically add accessible routes
           router.addRoutes(accessRoutes);
 
-          // hack method to ensure that addRoutes is complete
+          // hack method to ensure that adnext({ ...to, replace: true });dRoutes is complete
           // set the replace: true, so the navigation will not leave a history record
-          // next({ ...to, replace: true });
+          next({ ...to, replace: true });
 
           // detail see: https://github.com/vuejs/vue-router/issues/2873
-          // fixed router.replace error => Uncaught (in promise) undefined
-          next();
+          // fixed router.replace / next({ ...to, replace: true }); error => Uncaught (in promise) undefined
+          // next(to);
         } catch (error) {
           // remove token and go to login page to re-login
           console.log(error);
