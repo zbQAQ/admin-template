@@ -54,7 +54,7 @@ export default {
           const res = await posts.login();
           storage.set("token", res.token);
           this.$router.push("/");
-          this.loading = false;
+          // this.loading = false;
         } else {
           return false;
         }
